@@ -6,9 +6,9 @@
 
     <color name="window_background">#EEEEEE</color>
 
-    <color name="primaryColor">#7B7C7F</color>
-    <color name="primaryDarkColor">#2A2A2A</color>
-    <color name="accentColor">#FAD317</color>
+    <color name="primaryColor">#00bcd4</color>
+    <color name="primaryDarkColor">#0097a7</color>
+    <color name="accentColor">#fad317</color>
 
     //#939496 color gris fondo
     //#2A2A2A gris obscuro
