@@ -1,147 +1,158 @@
 package com.example.yohel.uno;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 
-public class Main4Activity extends AppCompatActivity {
+public class Main4Activity extends AppCompatActivity  {
 
-
-    private Button button;
-    private EditText editText;
-    private EditText editText2;
-    private Context context = this;
-
-    private static final int SERVERPORT = 80;
-    private static final String ADDRESS = "192.168.4.1";
-
-
-
-
+    private EditText entrada;
+    private TextView salida;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab2);
-
-        button = ((Button) findViewById(R.id.button));
-        editText = ((EditText) findViewById(R.id.editText));
-        editText2 = ((EditText) findViewById(R.id.editText2));
+        entrada = (EditText) findViewById(R.id.EditText01);
+        salida = (TextView) findViewById(R.id.TextView01);
 
 
-
-        button.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View view) {
-                        if(editText.getText().toString().length()>0){
-                            MyATaskCliente myATaskYW = new MyATaskCliente();
-                            myATaskYW.execute(editText.getText().toString());
-                        }else{
-                            Toast.makeText(context, "Escriba \"frase\" o \"libro\" ", Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                });
-
-
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.
+                Builder().permitNetwork().build());
     }
 
 
-    /**
-     * Clase para interactuar con el servidor
-     * */
-    class MyATaskCliente extends AsyncTask<String,Void,String> {
 
-        /**
-         * Ventana que bloqueara la pantalla del movil hasta recibir respuesta del servidor
-         * */
-        ProgressDialog progressDialog;
 
-        /**
-         * muestra una ventana emergente
-         * */
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setTitle("Connecting to server");
-            progressDialog.setMessage("Please wait...");
-            progressDialog.show();
+    public void Buscar(View view){
+        try {
+            String palabras = entrada.getText().toString();
+            String resultado = resultadosGoogle(palabras);
+            salida.append(palabras + "--" + resultado + "\n");
+        } catch (Exception e) {
+            salida.append("Error al conectar\n");
+            Log.e("HTTP", e.getMessage(), e);
         }
+    }
 
-        /**
-         * Se conecta al servidor y trata resultado
-         * */
-        @Override
-        protected String doInBackground(String... values){
 
-            try {
-                //Se conecta al servidor
-                InetAddress serverAddr = InetAddress.getByName(ADDRESS);
-                Log.i("I/TCP Client", "Connecting...");
-                Socket socket = new Socket (serverAddr, SERVERPORT);
-                Log.i("I/TCP Client", "Connected to server");
 
-                //envia peticion de cliente
-                Log.i("I/TCP Client", "Send data to server");
-                PrintStream output = new PrintStream(socket.getOutputStream());
-                String request = values[0];
-                output.println(request);
 
-                //recibe respuesta del servidor y formatea a String
-                Log.i("I/TCP Client", "Received data to server");
-                InputStream stream = socket.getInputStream();
-                byte[] lenBytes = new byte[256];
-                stream.read(lenBytes,0,256);
-                String received = new String(lenBytes,"UTF-8").trim();
-                Log.i("I/TCP Client", "Received " + received);
-                Log.i("I/TCP Client", "");
-                //cierra conexion
-                socket.close();
-                return received;
-            }catch (UnknownHostException ex) {
-                Log.e("E/TCP Client", "" + ex.getMessage());
-                return ex.getMessage();
-            } catch (IOException ex) {
-                Log.e("E/TCP Client", "" + ex.getMessage());
-                return ex.getMessage();
+    String resultadosGoogle(String palabras) throws Exception {
+        String pagina = "", devuelve = "";
+        // URL url = new URL("http://www.google.es/search?hl=es&q=\""
+        URL url = new URL("http://192.168.4.1:80/search?hl=es&q=\""
+                + URLEncoder.encode(palabras, "UTF-8") + "\"");
+        HttpURLConnection conexion = (HttpURLConnection)
+                url.openConnection();
+        conexion.setRequestProperty("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1)");
+        if (conexion.getResponseCode()==HttpURLConnection.HTTP_OK) {
+            BufferedReader reader = new BufferedReader(new
+                    InputStreamReader(conexion.getInputStream()));
+            String linea = reader.readLine();
+            while (linea != null) {
+                pagina += linea;
+                linea = reader.readLine();
             }
+            reader.close();
+            devuelve = buscaAproximadamente(pagina);
+        } else {
+            devuelve = "ERROR: " + conexion.getResponseMessage();
         }
+        conexion.disconnect();
+        return devuelve;
 
-        /**
-         * Oculta ventana emergente y muestra resultado en pantalla
-         * */
-        @Override
-        protected void onPostExecute(String value){
-            progressDialog.dismiss();
-            editText2.setText(value);
+
+    }
+    String buscaAproximadamente(String pagina){
+        int ini = pagina.indexOf("Aproximadamente");
+        if (ini != -1) {
+            int fin = pagina.indexOf(" ", ini + 16);
+            return pagina.substring(ini + 16, fin);
+        } else {
+            return "no encontrado";
         }
     }
+
+
+
 }
 
 
+/*
+Codigo Correcto
+
+public class MainActivity extends Activity {
+   private EditText entrada;
+   private TextView salida;
+   @Override
+   public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.activity_main);
+      entrada = (EditText) findViewById(R.id.EditText01);
+      salida = (TextView) findViewById(R.id.TextView01);
+      StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.
+            Builder().permitNetwork().build());
+   }
+   public void buscar(View view){
+      try {
+         String palabras = entrada.getText().toString();
+         String resultado = resultadosGoogle(palabras);
+         salida.append(palabras + "--" + resultado + "\n");
+      } catch (Exception e) {
+         salida.append("Error al conectar\n");
+         Log.e("HTTP", e.getMessage(), e);
+      }
+   }
+
+   String resultadosGoogle(String palabras) throws Exception {
+      String pagina = "", devuelve = "";
+      URL url = new URL("http://www.google.es/search?hl=es&q=\""
+            + URLEncoder.encode(palabras, "UTF-8") + "\"");
+      HttpURLConnection conexion = (HttpURLConnection)
+            url.openConnection();
+      conexion.setRequestProperty("User-Agent",
+            "Mozilla/5.0 (Windows NT 6.1)");
+      if (conexion.getResponseCode()==HttpURLConnection.HTTP_OK) {
+         BufferedReader reader = new BufferedReader(new
+            InputStreamReader(conexion.getInputStream()));
+         String linea = reader.readLine();
+         while (linea != null) {
+            pagina += linea;
+            linea = reader.readLine();
+         }
+         reader.close();
+         devuelve = buscaAproximadamente(pagina);
+      } else {
+         devuelve = "ERROR: " + conexion.getResponseMessage();
+      }
+      conexion.disconnect();
+      return devuelve;
+   }
+   String buscaAproximadamente(String pagina){
+      int ini = pagina.indexOf("Aproximadamente");
+      if (ini != -1) {
+         int fin = pagina.indexOf(" ", ini + 16);
+         return pagina.substring(ini + 16, fin);
+      } else {
+         return "no encontrado";
+      }
+   }
+}
 
 
-
-
-
+ */
 
 
 

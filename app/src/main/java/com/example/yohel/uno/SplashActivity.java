@@ -1,9 +1,8 @@
 package com.example.yohel.uno;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -26,7 +25,15 @@ public class SplashActivity extends AppCompatActivity {
     /*public void llamar(View view){
         Intent i=new Intent(this,MainActivity.class);
         startActivity(i);
-    }*/
+
+    }
+    private Handler mHandler = new Handler();
+
+
+
+
+
+    */
 
 
 }

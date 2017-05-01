@@ -10,34 +10,35 @@
               android:paddingTop="@dimen/activity_vertical_margin"
               android:weightSum="1">
 
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Ingrese petición" />
-
-<EditText
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/editText"/>
-
     <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Respuesta del servidor" />
+        android:id="@+id/Espacio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.48"/>
+
+
+
+    <EditText android:id="@+id/EditText01"
+              android:layout_height="wrap_content"
+              android:layout_width="match_parent"
+              android:text="palabra a buscar"/>
 
     <Button
-        android:layout_width="match_parent"
+        android:id="@+id/Button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enviar petición"
-        android:id="@+id/button" />
+        android:onClick="Buscar"
+        android:text="Iniciar Conexion"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_weight="0.06"/>
+    <TextView android:id="@+id/TextView01"
+              android:layout_height="294dp"
+              android:layout_width="match_parent"
+              android:textSize="8pt"/>
+
+
+
+
+
 
 </LinearLayout>
 

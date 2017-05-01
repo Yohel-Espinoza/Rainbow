@@ -1,16 +1,14 @@
 package com.example.yohel.uno;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.TableLayout;
-
-
-import android.support.v4.app.FragmentTabHost;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabla = (TabLayout) findViewById(R.id.tabs);
         tabla.setupWithViewPager(mViewPager);
+
 
 
         /*tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);

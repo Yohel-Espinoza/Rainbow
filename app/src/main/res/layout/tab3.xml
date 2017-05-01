@@ -46,6 +46,13 @@ android:orientation="vertical"
         android:id="@+id/textView12" />
 
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Mat:1719326  Enrique de la Funente Amaya"/>
+
+    <TextView
         android:gravity="center_vertical|center_horizontal"
         android:text=""
         android:layout_width="match_parent"
