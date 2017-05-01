@@ -1,6 +1,7 @@
 package com.example.yohel.uno;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,7 +9,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.TableLayout;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -19,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private FragmentTabHost tabHost;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +55,61 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(tabHost.newTabSpec("tab3").setIndicator("Acerca de..."),
                 Tab3AcercaDe.class, null);*/
 
+
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.
+                Builder().permitNetwork().build());
       }
+
+    public void ConexionM(View view){
+        try {
+            String pagina = "";
+            // URL url = new URL("http://www.google.es/search?hl=es&q=\""
+
+
+
+            URL url = new URL("http://192.168.4.1:80/search?hl=es&q=\"");
+            HttpURLConnection conexion = (HttpURLConnection)
+                    url.openConnection();
+            conexion.setRequestProperty("User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.1)");
+
+            if (conexion.getResponseCode()==HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new
+                        InputStreamReader (conexion.getInputStream()));
+
+                String linea = reader.readLine();
+                while (linea != null) {
+                    pagina += linea;
+                    linea = reader.readLine();
+                }
+                reader.close();
+            }
+
+
+
+
+
+            conexion.disconnect();
+
+
+
+
+        } catch (Exception e) {
+
+            Log.e("HTTP", e.getMessage(), e);
+        }
+
+
+      //  WebView myWebView = (WebView) this.findViewById(R.id.web);
+        //myWebView.loadUrl("https://192.168.4.1:80/");
+
+
+    }
+
+
+
+
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -90,4 +153,5 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
 }
